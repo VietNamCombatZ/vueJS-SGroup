@@ -1,0 +1,30 @@
+* 6-5
+
+
+1/ 
+- Trong src/ asset chứa các file ảnh, video, css(này có thể tách riêng ra 1 folder riêng)
+- Các file trong views không phải view như trong MVVM mà mỗi view sẽ ứng với 1 API
+- Router kiểm tra đường dẫn (tương tự controller trong MVC)
+- stores sẽ lưu các thông tin, nó sẽ trả thông tin về cho view khi có thay đổi trong viewmodel
+- 
+
+2/ BTVN
+- Viết file docker cho project cuối khoá BE
+- Xem trước view syntax | layout | component
+
+3. Extension
+- tailwind css
+- unocss
+- px to rem
+- vue ecosystem
+
+4/ Kiến thức
+- IIFE (Immediately Invoke function expression)
+- trong script chú ý setup lang =ts
+- dùng reactive() cho các kiểu dữ liệu tham chiếu như array, obj,... để cập nhật và thay đổi dữ liệu
+
+
+
+
+
+

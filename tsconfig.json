@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+  ],
+  // "include": [
+  //   "node_modules/@babel/types",
+     
+  //   "src/**/*"  // Thêm src/**/* nếu bạn muốn bao gồm tất cả mã nguồn
+  // ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
