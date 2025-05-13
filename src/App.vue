@@ -2,6 +2,10 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import { useCounterStore } from './stores/counter'
+import LoginForm from '@/components/LoginForm.vue'
+
+
+
 const varA = "Hello"
 const varB = "World"
 const obj1 ={"name":"John", "age":30, "city":"New York"}
@@ -25,33 +29,7 @@ function increment2(){
 
 <template>
   <header>
-    <h1 >{{varA}} {{ varB }}</h1>
-    <h3>{{ varA + ' ' + varB + "number2" }}</h3>
-    <h1>{{ obj1 }}</h1>
-    {{ html1 }}
-    <HelloWorld msg="Default message"></HelloWorld>
-    
-    
-    <h1 v-html="html1"></h1>
-    <button type="button" :disabled="Boolean(0)" v-bind="style01" >This is a button</button>
-
-    <button @click="a++" style="background-color: aqua;">{{ a }}</button>
-    <button @click="a2++" style="background-color: burlywood;">{{ a2 }}</button>
-    <button @click="increment()" style="background-color: aqua;">{{ a }}</button>
-    <button @click="increment2()" style="background-color: aqua;">{{ a3 }}</button>
-
-    <!-- <button @click="counterStore.increment()">{{counterStore.count}}</button> -->
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+    <LoginForm />
   </header>
 
   <RouterView />
