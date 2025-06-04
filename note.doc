@@ -9,14 +9,21 @@
 - 
 
 2/ BTVN
+a/6-5
 - Viết file docker cho project cuối khoá BE
 - Xem trước view syntax | layout | component
+
+b/13-5
+- Ráp vô login, register với BE trello và trả về access token
+- Tại sao dùng password.value === '' thay vì !password.value
+
 
 3. Extension
 - tailwind css
 - unocss
 - px to rem
 - vue ecosystem
+- vue axios
 
 4/ Kiến thức
 - IIFE (Immediately Invoke function expression)
@@ -24,6 +31,10 @@
 - dùng reactive() cho các kiểu dữ liệu tham chiếu như array, obj,... để cập nhật và thay đổi dữ liệu
 
 
+* Cần thử cẩn thận:
+- xoá hết nội dung component.json và src/assets/main.css. (xoá nội dung, không xoá file)
+- npx shadcn-vue@latest init
+- Nó sẽ khởi tạo 
 
 
 
