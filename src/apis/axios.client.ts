@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
-// const axiosClient = axios.create({
-//     baseURL: import.meta.env.VITE_API_URL
-// })
-
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:3000/', // sửa đúng theo port server của bạn
-
+    baseURL: import.meta.env.VITE_API_URL
 })
+
+// const axiosClient = axios.create({
+//   baseURL: 'http://localhost:3000/', // sửa đúng theo port server của bạn
+
+// })
 
 axiosClient.interceptors.request.use((config) => {
     config.headers['Content-Type'] = 'application/json'

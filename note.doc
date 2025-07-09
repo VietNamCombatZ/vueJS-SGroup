@@ -37,5 +37,17 @@ b/13-5
 - Nó sẽ khởi tạo 
 
 
+*4-6
+1/ trong dự án này, file main.ts sẽ là đầu ra của phần BE
+* Cấu trúc thư mục
+- assets: chứa liên quan .css, .svg
+- components: chứa các phần tử gộp lại thành UI(ví dụ card, button, input,...)
+- views: các trang hiển thị (thì App.vue là đầu ra tổng), 
+
+
+
+
+
+
 
 
