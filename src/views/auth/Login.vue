@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import { ref } from 'vue'
 import {
@@ -235,3 +235,120 @@ import LoginForm from '@/registry/default/blocks/Login01/components/LoginForm.vu
     <LoginForm />
   </div>
 </template> -->
+
+`<script setup lang="ts">
+import { useForm } from 'vee-validate'
+import axios from 'axios'
+import { toTypedSchema } from '@vee-validate/zod'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import * as z from 'zod'
+
+import { Button } from '@/components/ui/button'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { AxiosError } from 'axios'
+import type { ApiResponse } from '@/apis/apiResponse'
+import { useUserStore } from '@/stores/user'
+
+const errorMessage = ref('')
+const router = useRouter()
+
+const formSchema = toTypedSchema(z.object({
+  email: z.string().min(2).max(50).email(),
+  password: z.string().min(6).max(100).refine((val) => {
+    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$/.test(val) || 'Password must contain at least one letter and one number'
+  }),
+}))
+
+const form = useForm({
+  validationSchema: formSchema,
+})
+
+// const onSubmit = form.handleSubmit((values) => {
+//   console.log('Form submitted!', values)
+// })
+const onSubmit = form.handleSubmit(async (values) => {
+  try {
+    const response = await axios.post('http://localhost:3000/auth/login', {
+      email: values.email,
+      password: values.password,
+    })
+
+    const tokenData = response.data.data // vì bạn đang trả qua ServiceResponse
+    localStorage.setItem('accessToken', tokenData.accessToken)
+
+    const userStore = useUserStore()
+await userStore.fetchUser()
+router.push({ name: 'Home' })
+
+
+    // router.push('/dashboard')
+    router.push({ name: 'Home' })
+  } catch (error: unknown) {
+    // console.error('Login failed:', error)
+    // errorMessage.value = error.response?.data?.message || 'Login failed'
+    const axiosError = error as AxiosError<ApiResponse<null>>
+
+    if (axiosError.response?.data) {
+      errorMessage.value = axiosError.response.data.message
+    } else {
+      errorMessage.value = 'Unexpected error. Please try again later.'
+    }
+  }
+})
+</script>
+
+<template>
+  <div class="flex h-screen w-full items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <h1 class="text-2xl font-bold mb-6">Login</h1>
+      <p class="mb-4">Enter your email and password to login.</p>
+      <FormField v-slot="{ field }" name="email">
+        <FormItem>
+          <FormLabel>Email</FormLabel>
+          <FormControl>
+            <Input type="text" placeholder="shadcn" v-bind="field" />
+          </FormControl>
+          <!-- <FormDescription>
+            This is your public display name.
+          </FormDescription> -->
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+
+      <FormField v-slot="{ field }" name="password">
+        <FormItem>
+          <FormLabel>Password</FormLabel>
+          <FormControl>
+            <Input type="text" placeholder="shadcn" v-bind="field" />
+          </FormControl>
+          <!-- <FormDescription>
+            This is your public display name.
+          </FormDescription> -->
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+
+      <Button type="submit" @click="onSubmit">Submit</Button>
+      <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
+      <div class="mt-4 text-center text-sm">
+        Don't have an account?
+        <RouterLink to="/register" class="underline">Sign up</RouterLink>
+
+      </div>
+      </div>
+
+    </div>
+</template>
+`

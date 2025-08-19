@@ -29,6 +29,20 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
+import axios from 'axios'
+
+import { useUserStore } from '@/stores/user' // 💡 dùng store
+import { useRouter } from 'vue-router'
+const router = useRouter();
+const userStore = useUserStore();
+userStore.fetchUser(); // 💡 gọi hàm fetchUser để lấy thông tin user
+
+function handleLogout() {
+  userStore.logout()
+  router.push('/login') // hoặc tên route nếu bạn đặt name: 'Login'
+}
+
+
 const props = defineProps<{
   user: {
     name: string
@@ -36,6 +50,7 @@ const props = defineProps<{
     avatar: string
   }
 }>()
+
 
 const { isMobile } = useSidebar()
 </script>
@@ -50,14 +65,14 @@ const { isMobile } = useSidebar()
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
             <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
+              <AvatarImage :src="user.avatar" :alt="userStore.user?.name" />
               <AvatarFallback class="rounded-lg">
                 CN
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-semibold">{{ user.name }}</span>
-              <span class="truncate text-xs">{{ user.email }}</span>
+              <span class="truncate font-semibold">{{ userStore.user?.name }}</span>
+              <span class="truncate text-xs">{{ userStore.user?.email }}</span>
             </div>
             <ChevronsUpDown class="ml-auto size-4" />
           </SidebarMenuButton>
@@ -71,14 +86,14 @@ const { isMobile } = useSidebar()
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
+                <AvatarImage :src="user.avatar" :alt="userStore.user?.name" />
                 <AvatarFallback class="rounded-lg">
                   CN
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ user.name }}</span>
-                <span class="truncate text-xs">{{ user.email }}</span>
+                <span class="truncate font-semibold">{{ userStore.user?.name }}</span>
+                <span class="truncate text-xs">{{ userStore.user?.email }}</span>
               </div>
             </div>
           </DropdownMenuLabel>
@@ -105,8 +120,8 @@ const { isMobile } = useSidebar()
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <LogOut />
+          <DropdownMenuItem @click="handleLogout">
+            <LogOut  />
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>

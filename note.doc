@@ -44,6 +44,39 @@ b/13-5
 - components: chứa các phần tử gộp lại thành UI(ví dụ card, button, input,...)
 - views: các trang hiển thị (thì App.vue là đầu ra tổng), 
 
+*9-7
+1/BTVN
+- Tìm hiểu khác nhau 2 thẻ slot và router view trong src/layouts/default.vue
+- Bổ sung xử lý cho refreshToken (trong apis/axios.client), có thể theo hướng lưu vô localStorage
+- Sự khác biệt giữa attribute có/không có dấu ":"
+- tìm hiểu pinia, computed, slot
+
+2/ Pinia
+- Trong VUE hay dùng Pinia để lưu trạng thái
+
+3/ ref
+- Giá trị trong ref() sẽ bị huỷ đi khi phần tử bị unmount, destroy(xoá khỏi DOM - chuyển trang,...)
+
+
+* 23-7
+1/ BTVN
+- Tìm hiểu sử dụng thêm radio button, dropdown list,....
+- Hoàn thiện đăng nhập, đăng ký, lưu token để sử dụng cho các phần authenticate, làm luôn reset password
+
+
+
+2/ Dùng gì để validate
+- Dùng yup, zod
+
+
+
+
+
+
+
+
+
+
 
 
 
