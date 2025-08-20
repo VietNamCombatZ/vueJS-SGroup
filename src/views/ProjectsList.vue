@@ -85,23 +85,59 @@
             Assigned to: {{ project.assigned }}
           </div>
 
-          <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-            <div class="flex space-x-2">
-              <button
-                class="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                @click="editProject(project)"
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100">
+            <!-- Edit Button -->
+            <button
+              @click="openEditModal(project)"
+              class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+              Edit
+            </button>
+
+            <!-- Archive/Unarchive Button -->
+            <button
+              @click="handleArchiveProject(project)"
+              :disabled="archivingProjects.has(project.id || '')"
+              :class="[
+                'flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center',
+                project.is_archive 
+                  ? 'bg-green-50 hover:bg-green-100 text-green-700 disabled:bg-green-25' 
+                  : 'bg-orange-50 hover:bg-orange-100 text-orange-700 disabled:bg-orange-25'
+              ]"
+            >
+              <svg 
+                v-if="archivingProjects.has(project.id || '')"
+                class="animate-spin w-4 h-4 mr-1" 
+                fill="none" 
+                viewBox="0 0 24 24"
               >
-                Edit
-              </button>
-              <button
-                v-if="!project.is_archive"
-                class="text-orange-600 hover:text-orange-700 text-sm font-medium"
-                @click="archiveProject(project.id!)"
-              >
-                Archive
-              </button>
-            </div>
-            <span class="text-xs text-gray-400"> ID: {{ project.id?.substring(0, 8) }}... </span>
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg v-else class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l6 6V9h3a2 2 0 012 2v1M5 8V6a2 2 0 012-2h3v3m-3 7V8m0 0V6a2 2 0 012-2h3v3"></path>
+              </svg>
+              {{ archivingProjects.has(project.id || '') ? 'Processing...' : (project.is_archive ? 'Unarchive' : 'Archive') }}
+            </button>
+
+            <!-- Manage Members Button -->
+            <button
+              @click="openMembersModal(project)"
+              class="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center mt-2"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-.5a4 4 0 110 5.292M21 21v-1a4 4 0 00-3-3.87"></path>
+              </svg>
+              Manage Members
+            </button>
+          </div>
+
+          <div class="mt-3 text-xs text-gray-400 text-center">
+            ID: {{ project.id?.substring(0, 8) }}...
           </div>
         </div>
       </div>
@@ -139,11 +175,26 @@
         </button>
       </div>
 
-      <!-- Create Project Modal -->
+      <!-- Modals -->
       <CreateProjectModal
         :is-open="showCreateModal"
-        @close="showCreateModal = false"
+        @close="closeCreateModal"
         @success="handleProjectCreated"
+      />
+
+      <EditProjectModal
+        :is-open="showEditModal"
+        :project="selectedProject"
+        @close="closeEditModal"
+        @success="handleProjectUpdated"
+      />
+
+      <ManageMembersModal
+        :is-open="showMembersModal"
+        :project="selectedProject"
+        @close="closeMembersModal"
+        @memberAdded="handleMemberChanged"
+        @memberRemoved="handleMemberChanged"
       />
     </div>
   </div>
@@ -152,15 +203,45 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import CreateProjectModal from '@/components/CreateProjectModal.vue'
+import EditProjectModal from '@/components/EditProjectModal.vue'
+import ManageMembersModal from '@/components/ManageMembersModal.vue'
 import { projectsApi, type Project } from '@/apis/projects'
 
 const projects = ref<Project[]>([])
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 const showCreateModal = ref(false)
+const showEditModal = ref(false)
+const showMembersModal = ref(false)
+const selectedProject = ref<Project | null>(null)
+const archivingProjects = ref(new Set<string>())
 
 const openCreateModal = () => {
   showCreateModal.value = true
+}
+
+const closeCreateModal = () => {
+  showCreateModal.value = false
+}
+
+const openEditModal = (project: Project) => {
+  selectedProject.value = project
+  showEditModal.value = true
+}
+
+const closeEditModal = () => {
+  showEditModal.value = false
+  selectedProject.value = null
+}
+
+const openMembersModal = (project: Project) => {
+  selectedProject.value = project
+  showMembersModal.value = true
+}
+
+const closeMembersModal = () => {
+  showMembersModal.value = false
+  selectedProject.value = null
 }
 
 const fetchProjects = async () => {
@@ -184,33 +265,49 @@ const fetchProjects = async () => {
 
 const handleProjectCreated = (newProject: Project) => {
   projects.value.unshift(newProject)
+  closeCreateModal()
 }
 
-const editProject = (project: Project) => {
-  // TODO: Implement edit functionality
-  console.log('Edit project:', project)
-  alert('Edit functionality will be implemented next!')
+const handleProjectUpdated = (updatedProject: Project) => {
+  const index = projects.value.findIndex(p => p.id === updatedProject.id)
+  if (index !== -1) {
+    projects.value[index] = updatedProject
+  }
+  closeEditModal()
 }
 
-const archiveProject = async (projectId: string) => {
-  if (!confirm('Are you sure you want to archive this project?')) return
+const handleArchiveProject = async (project: Project) => {
+  if (!project.id) return
+  
+  const action = project.is_archive ? 'unarchive' : 'archive'
+  if (!confirm(`Are you sure you want to ${action} this project?`)) return
 
   try {
-    const response = await projectsApi.archiveProject(projectId)
+    archivingProjects.value.add(project.id)
+    
+    const response = await projectsApi.archiveProject(project.id)
     if (response.success) {
       // Update the project in the list
-      const projectIndex = projects.value.findIndex((p) => p.id === projectId)
+      const projectIndex = projects.value.findIndex((p) => p.id === project.id)
       if (projectIndex !== -1) {
         projects.value[projectIndex] = response.data
       }
-      alert('Project archived successfully!')
+      alert(`Project ${action}d successfully!`)
     } else {
-      throw new Error(response.message || 'Failed to archive project')
+      throw new Error(response.message || `Failed to ${action} project`)
     }
   } catch (err) {
-    console.error('Error archiving project:', err)
-    alert(`Error archiving project: ${(err as Error).message}`)
+    console.error(`Error ${action}ing project:`, err)
+    alert(`Error ${action}ing project: ${(err as Error).message}`)
+  } finally {
+    archivingProjects.value.delete(project.id)
   }
+}
+
+const handleMemberChanged = () => {
+  // Optionally refresh projects list or update member count
+  // For now, just log the action
+  console.log('Member list changed')
 }
 
 // Fetch projects on component mount
