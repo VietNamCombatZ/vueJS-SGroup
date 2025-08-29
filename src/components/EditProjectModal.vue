@@ -1,21 +1,20 @@
 <template>
-  <div 
-    v-if="isOpen" 
+  <div
+    v-if="isOpen"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     @click="closeModal"
   >
-    <div 
-      class="bg-white rounded-lg p-6 w-full max-w-md mx-4"
-      @click.stop
-    >
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4" @click.stop>
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold text-gray-800">Edit Project</h2>
-        <button 
-          @click="closeModal"
-          class="text-gray-400 hover:text-gray-600 transition-colors"
-        >
+        <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
           </svg>
         </button>
       </div>
@@ -75,14 +74,25 @@
             :disabled="isSubmitting || !formData.title.trim() || !formData.description.trim()"
             class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-md transition-colors flex items-center justify-center"
           >
-            <svg 
-              v-if="isSubmitting" 
-              class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" 
-              fill="none" 
+            <svg
+              v-if="isSubmitting"
+              class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+              fill="none"
               viewBox="0 0 24 24"
             >
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             {{ isSubmitting ? 'Updating...' : 'Update Project' }}
           </button>
@@ -113,26 +123,33 @@ const isSubmitting = ref(false)
 const formData = reactive<CreateProjectRequest>({
   title: '',
   description: '',
-  assigned: ''
+  assigned: '',
 })
 
 // Populate form when project changes
-watch(() => props.project, (project) => {
-  if (project) {
-    formData.title = project.title || ''
-    formData.description = project.description || ''
-    formData.assigned = project.assigned || ''
-  }
-}, { immediate: true })
+watch(
+  () => props.project,
+  (project) => {
+    if (project) {
+      formData.title = project.title || ''
+      formData.description = project.description || ''
+      formData.assigned = project.assigned || ''
+    }
+  },
+  { immediate: true },
+)
 
 // Reset form when modal opens
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen && props.project) {
-    formData.title = props.project.title || ''
-    formData.description = props.project.description || ''
-    formData.assigned = props.project.assigned || ''
-  }
-})
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen && props.project) {
+      formData.title = props.project.title || ''
+      formData.description = props.project.description || ''
+      formData.assigned = props.project.assigned || ''
+    }
+  },
+)
 
 const closeModal = () => {
   emit('close')
@@ -143,19 +160,19 @@ const handleSubmit = async () => {
 
   try {
     isSubmitting.value = true
-    
+
     const projectData = {
       title: formData.title.trim(),
       description: formData.description.trim(),
-      assigned: formData.assigned?.trim() || undefined
+      assigned: formData.assigned?.trim() || undefined,
     }
-    
+
     const response = await projectsApi.updateProject(props.project.id, projectData)
-    
+
     if (response.success) {
       emit('success', response.data)
       closeModal()
-      
+
       // Show success notification (you can replace this with your preferred notification system)
       alert('Project updated successfully!')
     } else {

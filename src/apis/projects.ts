@@ -26,6 +26,11 @@ export interface ProjectMember {
   role: string
 }
 
+export interface Board {
+  id: string
+  title: string
+}
+
 export const projectsApi = {
   async createProject(projectData: CreateProjectRequest): Promise<ApiResponse<Project>> {
     const response = await $post('/projects', projectData)
@@ -47,6 +52,11 @@ export const projectsApi = {
 
   async archiveProject(projectId: string): Promise<ApiResponse<Project>> {
     const response = await $patch(`/projects/${projectId}/archive`)
+    return response.data
+  },
+
+  async getBoards(projectId: string): Promise<ApiResponse<Board[]>> {
+    const response = await $get(`/projects/${projectId}/boards`)
     return response.data
   },
 
