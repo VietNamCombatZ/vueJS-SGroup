@@ -31,6 +31,32 @@ export interface Board {
   title: string
 }
 
+export interface CreateBoardRequest {
+  title: string
+}
+
+export interface Board {
+  id: string
+  title: string
+  description?: string
+  coverUrl?: string
+  assigned?: string
+  is_archive?: boolean
+}
+
+export interface CreateBoardRequest {
+  title: string
+  description?: string
+}
+
+export interface UpdateBoardRequest {
+  title?: string
+  description?: string
+  coverUrl?: string
+  assigned?: string
+  is_archive?: boolean
+}
+
 export const projectsApi = {
   async createProject(projectData: CreateProjectRequest): Promise<ApiResponse<Project>> {
     const response = await $post('/projects', projectData)
@@ -57,6 +83,34 @@ export const projectsApi = {
 
   async getBoards(projectId: string): Promise<ApiResponse<Board[]>> {
     const response = await $get(`/projects/${projectId}/boards`)
+    return response.data
+  },
+
+  async createBoard(projectId: string, boardData: CreateBoardRequest): Promise<ApiResponse<Board>> {
+    const response = await $post(`/projects/${projectId}/boards`, boardData)
+    return response.data
+  },
+
+  async getBoardById(boardId: string): Promise<ApiResponse<Board>> {
+    const response = await $get(`/boards/${boardId}`)
+    return response.data
+  },
+
+  async updateBoard(boardId: string, data: UpdateBoardRequest): Promise<ApiResponse<Board>> {
+    const response = await $put(`/boards/${boardId}`, data)
+    return response.data
+  },
+
+  async archiveBoard(boardId: string): Promise<ApiResponse<Board>> {
+    const response = await $patch(`/boards/${boardId}/archive`)
+    return response.data
+  },
+
+  async sortBoardLists(
+    boardId: string,
+    sortedListIds: string[],
+  ): Promise<ApiResponse<{ id: string }[]>> {
+    const response = await $patch(`/boards/${boardId}/lists/sort`, { sortedListIds })
     return response.data
   },
 
