@@ -6,6 +6,11 @@ import ProjectsList from '../views/ProjectsList.vue'
 
 const routes = [
   {
+    path: '/boards/:boardId',
+    name: 'BoardDetail',
+    component: () => import('@/views/BoardDetail.vue'),
+  },
+  {
     path: '/projects',
     name: 'Projects',
     component: ProjectsList,

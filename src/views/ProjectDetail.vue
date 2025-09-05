@@ -25,7 +25,9 @@
               </p>
             </div>
             <div class="flex items-center gap-2">
-              <router-link :to="`/boards/${board.id}`" class="text-blue-600 hover:underline"
+              <router-link
+                :to="{ name: 'BoardDetail', params: { boardId: board.id } }"
+                class="text-blue-600 hover:underline"
                 >Open</router-link
               >
               <button class="text-amber-700 hover:underline" @click="startEdit(board)">Edit</button>

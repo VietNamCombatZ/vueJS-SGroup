@@ -1,3 +1,15 @@
+export interface UpdateListRequest {
+  title?: string
+}
+export interface CreateListRequest {
+  title: string
+}
+export interface List {
+  id: string
+  title: string
+  position: number
+  is_archive: boolean
+}
 import { $post, $get, $put, $patch, $delete } from './axios.client'
 import type { ApiResponse } from './apiResponse'
 
@@ -58,6 +70,23 @@ export interface UpdateBoardRequest {
 }
 
 export const projectsApi = {
+  async updateList(listId: string, data: UpdateListRequest): Promise<ApiResponse<List>> {
+    const response = await $put(`/lists/${listId}`, data)
+    return response.data
+  },
+
+  async archiveList(listId: string): Promise<ApiResponse<List>> {
+    const response = await $patch(`/lists/${listId}/archive`)
+    return response.data
+  },
+  async createList(boardId: string, listData: CreateListRequest): Promise<ApiResponse<List>> {
+    const response = await $post(`/boards/${boardId}/lists`, listData)
+    return response.data
+  },
+  async getListsOfBoard(boardId: string): Promise<ApiResponse<List[]>> {
+    const response = await $get(`/boards/${boardId}/lists`)
+    return response.data
+  },
   async createProject(projectData: CreateProjectRequest): Promise<ApiResponse<Project>> {
     const response = await $post('/projects', projectData)
     return response.data
